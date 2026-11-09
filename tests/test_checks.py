@@ -1,4 +1,8 @@
-from kubeaudit.checks import check_latest_tag, check_missing_limits
+from kubeaudit.checks import (
+    check_latest_tag,
+    check_missing_limits,
+    check_missing_readiness_probe,
+)
 
 
 def test_latest_tag_found():
@@ -224,5 +228,82 @@ def test_limits_present_not_found():
     }
 
     result = check_missing_limits(dep)
+
+    assert len(result) == 0
+
+
+def test_missing_readiness_probe_found():
+
+    dep = {
+        "kind": "Deployment",
+        "metadata": {"name": "nginx", "namespace": "default"},
+        "spec": {
+            "template": {
+                "spec": {
+                    "containers": [
+                        {"name": "nginx", "image": "nginx:1.27"},
+                    ]
+                }
+            }
+        },
+    }
+    result = check_missing_readiness_probe(dep)
+
+    assert len(result) == 1
+    assert result[0].check_id == "missing-readiness-probe"
+
+
+def test_readiness_probe_present_not_found():
+
+    dep = {
+        "kind": "Deployment",
+        "metadata": {"name": "nginx", "namespace": "default"},
+        "spec": {
+            "template": {
+                "spec": {
+                    "containers": [
+                        {
+                            "name": "nginx",
+                            "image": "nginx:1.27",
+                            "readinessProbe": {
+                                "httpGet": {"path": "/healthz", "port": 8080}
+                            },
+                        },
+                    ]
+                }
+            }
+        },
+    }
+    result = check_missing_readiness_probe(dep)
+
+    assert len(result) == 0
+
+
+def test_init_container_without_probe_not_found():
+
+    dep = {
+        "kind": "Deployment",
+        "metadata": {"name": "nginx", "namespace": "default"},
+        "spec": {
+            "template": {
+                "spec": {
+                    "initContainers": [
+                        {"name": "init", "image": "busybox:1.36"},
+                    ],
+                    "containers": [
+                        {
+                            "name": "nginx",
+                            "image": "nginx:1.27",
+                            "readinessProbe": {
+                                "httpGet": {"path": "/healthz", "port": 8080}
+                            },
+                        },
+                    ],
+                }
+            }
+        },
+    }
+
+    result = check_missing_readiness_probe(dep)
 
     assert len(result) == 0

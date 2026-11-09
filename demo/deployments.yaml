@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bad-app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bad-app
+  template:
+    metadata:
+      labels:
+        app: bad-app
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: good-app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: good-app
+  template:
+    metadata:
+      labels:
+        app: good-app
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.27
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: 200m
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
