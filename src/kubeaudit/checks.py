@@ -23,3 +23,26 @@ def check_latest_tag(resource):
                 )
             )
     return result
+
+
+def check_missing_limits(resource):
+    result = []
+    if resource.get("kind") == "Pod":
+        pod_spec = resource.get("spec", {})
+    else:
+        pod_spec = resource.get("spec", {}).get("template", {}).get("spec", {})
+    for container in pod_spec.get("containers", []) + pod_spec.get(
+        "initContainers", []
+    ):
+        if not container.get("resources", {}).get("limits", []):
+            result.append(
+                Finding(
+                    check_id="missing-limits",
+                    severity=Severity.WARNING,
+                    kind=resource["kind"],
+                    namespace=resource["metadata"]["namespace"],
+                    name=resource["metadata"]["name"],
+                    message=f"container {container['name']} has no resource limits",
+                )
+            )
+    return result
