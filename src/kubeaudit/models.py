@@ -1,10 +1,12 @@
 from dataclasses import dataclass
 from enum import Enum
 
+
 class Severity(Enum):
     INFO = "info"
     WARNING = "warning"
     ERROR = "error"
+
 
 @dataclass
 class Finding:
