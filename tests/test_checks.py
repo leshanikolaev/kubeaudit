@@ -15,7 +15,7 @@ def test_latest_tag_found():
     assert len(result) == 1
     assert result[0].check_id == "image-latest-tag"
 
-def test_latest_tag_no_found():
+def test_latest_tag_not_found():
     dep = {
     "kind": "Deployment",
     "metadata": {"name": "nginx", "namespace": "default"},
@@ -46,7 +46,7 @@ def test_latest_tag_two_found():
     "metadata": {"name": "nginx", "namespace": "default"},
     "spec": {"template": {"spec": {"containers": [
         {"name": "nginx", "image": "nginx:latest"},
-        {"name": "nginx", "image": "nginx:latest"},
+        {"name": "redis", "image": "redis:latest"},
     ]}}},
     }
 
@@ -54,3 +54,30 @@ def test_latest_tag_two_found():
 
     assert len(result) == 2
     assert result[0].check_id == "image-latest-tag"
+
+def test_image_without_tag():
+    dep = {
+    "kind": "Deployment",
+    "metadata": {"name": "nginx", "namespace": "default"},
+    "spec": {"template": {"spec": {"containers": [
+        {"name": "nginx", "image": "nginx"},
+    ]}}},
+    }
+
+    result = check_latest_tag(dep)
+
+    assert len(result) == 1
+
+def test_registry_with_port_without_tag():
+
+    dep = {
+    "kind": "Deployment",
+    "metadata": {"name": "nginx", "namespace": "default"},
+    "spec": {"template": {"spec": {"containers": [
+        {"name": "nginx", "image": "registry.local:5000/nginx"},
+    ]}}},
+    }
+
+    result = check_latest_tag(dep)
+
+    assert len(result) == 0
