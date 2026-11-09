@@ -80,4 +80,15 @@ def test_registry_with_port_without_tag():
 
     result = check_latest_tag(dep)
 
+    assert len(result) == 1
+
+def test_resource_without_containers():
+
+    dep = {
+    "kind": "ConfigMap",
+    "metadata": {"name": "app-config", "namespace": "default"},
+    "data": {"color": "blue"},
+}
+    result = check_latest_tag(dep)
+
     assert len(result) == 0
