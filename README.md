@@ -36,10 +36,11 @@ ruff format .
 ruff check .
 ```
 
-## Запуск
+## Запуск демо
 
 ```bash
 kind create cluster --name kubeaudit
+kubectl cluster-info --context kind-kubeaudit
 kubectl apply -f demo/deployments.yaml
 python -m kubeaudit.scanner
 ```
