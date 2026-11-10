@@ -41,7 +41,7 @@ def check_missing_limits(resource):
                     kind=resource["kind"],
                     namespace=resource["metadata"]["namespace"],
                     name=resource["metadata"]["name"],
-                    message=f"container {container['name']} hasn't resource limits",
+                    message=f"container {container['name']} has no resource limits",
                 )
             )
     return result
@@ -58,7 +58,7 @@ def check_missing_readiness_probe(resource):
                     kind=resource["kind"],
                     namespace=resource["metadata"]["namespace"],
                     name=resource["metadata"]["name"],
-                    message=f"container {container['name']} hasn't readiness probe",
+                    message=f"container {container['name']} has no readiness probe",
                 )
             )
     return result
