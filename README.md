@@ -35,3 +35,11 @@ pytest -v
 ruff format .
 ruff check .
 ```
+
+## Запуск
+
+```bash
+kind create cluster --name kubeaudit
+kubectl apply -f demo/deployments.yaml
+python -m kubeaudit.scanner
+```
