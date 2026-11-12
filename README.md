@@ -13,11 +13,13 @@
 ## Структура
 
 ```
+demo/
+  deployments.yaml # файлы для тестирования
 src/kubeaudit/
   models.py   # Severity, Finding
   checks.py   # get_pod_spec, get_containers, проверки
 tests/
-  test_checks.py
+  test_checks.py # тесты
 ```
 
 ## Установка
